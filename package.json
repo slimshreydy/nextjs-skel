@@ -12,7 +12,7 @@
     "start": "next start",
     "tidy-all": "prettier --ignore-path .gitignore --write .",
     "type-check": "tsc --noEmit",
-    "update-env": "vercel env pull .env.local"
+    "update-env": "vercel env pull .env"
   },
   "pre-commit": [
     "check-all-staged",

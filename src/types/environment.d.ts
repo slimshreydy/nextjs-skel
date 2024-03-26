@@ -5,6 +5,7 @@ declare global {
     /* eslint-disable-next-line @typescript-eslint/no-empty-interface */
     interface ProcessEnv {
       // Put type definitions for process.env variables here
+      readonly VERCEL_ENV: string;
     }
   }
 }

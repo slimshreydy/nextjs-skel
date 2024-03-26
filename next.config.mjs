@@ -1,22 +1,32 @@
 /** @type {import('next').NextConfig} */
 
 const CSP_HEADER = {
-  "default-src": "'self'",
-  "script-src": "'self' 'unsafe-inline' va.vercel-scripts.com vercel.live",
-  "style-src": "'self' 'unsafe-inline' vercel.live",
-  "img-src": "'self' blob: data: vercel.com",
-  "font-src": "'self'",
-  "object-src": "'none'",
-  "frame-src": "'self' vercel.live",
-  "base-uri": "'self'",
-  "form-action": "'self'",
-  "frame-ancestors": "'none'",
-  "block-all-mixed-content": "",
-  "upgrade-insecure-requests": "",
+  "default-src": ["'self'"],
+  "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", "va.vercel-scripts.com"],
+  "style-src": ["'self'", "'unsafe-inline'"],
+  "img-src": ["'self'", "blob:", "data:"],
+  "font-src": ["'self'"],
+  "object-src": ["'none'"],
+  "frame-src": ["'self'"],
+  "connect-src": ["'self'", "cdn.jsdelivr.net"],
+  "base-uri": ["'self'"],
+  "form-action": ["'self'"],
+  "frame-ancestors": ["'none'"],
+  "block-all-mixed-content": [""],
+  "upgrade-insecure-requests": [""],
 }
 
-if (process.env.NODE_ENV === 'development') {
-  CSP_HEADER["script-src"] += " 'unsafe-eval'"
+if (process.env.VERCEL_ENV === "preview") {
+  CSP_HEADER["script-src"].push(...["vercel.live"])
+  CSP_HEADER["style-src"].push(...["vercel.live"])
+  CSP_HEADER["img-src"].push(...["vercel.com"])
+  CSP_HEADER["connect-src"].push(...["vercel.live", "pusher.com"])
+  CSP_HEADER["frame-src"].push(...["vercel.live"])
+  CSP_HEADER["font-src"].push(...["vercel.live"])
+}
+
+if (process.env.VERCEL_ENV === "development") {
+  CSP_HEADER["script-src"].push("'unsafe-eval'")
 }
 
 const nextConfig = {
@@ -41,7 +51,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy-Report-Only',
-            value: Object.entries(CSP_HEADER).map(([type, policy]) => `${type} ${policy}`).join('; '),
+            value: Object.entries(CSP_HEADER).map(([type, policy]) => `${type} ${policy.join(" ")}`).join('; '),
           },
           {
             key: 'Permissions-Policy',
